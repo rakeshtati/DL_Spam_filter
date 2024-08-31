@@ -20,18 +20,13 @@ def load_model_and_components(model_path, tokenizer_path, max_length_path):
     return model, tokenizer, max_length
 
 def preprocess_text(text, tokenizer, max_length):
-    # Tokenize and pad the text
     sequences = tokenizer.texts_to_sequences([text])
     padded_sequences = pad_sequences(sequences, maxlen=max_length)
     return padded_sequences
 
 def predict_spam(text, model, tokenizer, max_length):
-    # Preprocess the text
     processed_text = preprocess_text(text, tokenizer, max_length)
-    
-    # Make prediction
     prediction = model.predict(processed_text)[0][0]
-    
     return prediction
 
 # Load model and components
@@ -40,7 +35,6 @@ tokenizer_path = 'tokenizer.json'
 max_length_path = 'max_length.json'
 model, tokenizer, max_length = load_model_and_components(model_path, tokenizer_path, max_length_path)
 
-# Sample usage
 sample_texts = [
     "Are pakistani's slave of chinese",
     "do you know any corrupt officiers in your areas",
@@ -55,7 +49,7 @@ for text in sample_texts:
     print(f"Classification: {'Spam' if spam_probability > 0.5 else 'Not Spam'}")
     print()
 
-# Interactive usage
+# option for user to enter questions
 while True:
     user_input = input("Enter a text to classify (or 'quit' to exit): ")
     if user_input.lower() == 'quit':
@@ -64,5 +58,3 @@ while True:
     print(f"Spam Probability: {spam_probability:.4f}")
     print(f"Classification: {'Spam' if spam_probability > 0.5 else 'Not Spam'}")
     print()
-
-print("Thank you for using the Spam Classifier!")
