@@ -48,7 +48,7 @@ def create_embedding_matrix(word_index, embeddings_index, embedding_dim):
             embedding_matrix[i] = embedding_vector
     return embedding_matrix
 
-# Build model (balanced version)
+# Build model
 def build_model(vocab_size, embedding_dim, embedding_matrix, max_length):
     model = Sequential([
         Embedding(vocab_size + 1, embedding_dim, weights=[embedding_matrix], input_length=max_length, trainable=False),
@@ -66,10 +66,8 @@ def main():
     # Load and preprocess data
     data = load_and_preprocess_data('train.csv')
     
-    # Split data into train+val and test sets
+    # Split data into train,valand test sets
     train_val_data, test_data = train_test_split(data, test_size=0.1, random_state=42)
-    
-    # Further split train+val into train and validation sets
     train_data, val_data = train_test_split(train_val_data, test_size=0.11111, random_state=42)
     
     # Tokenize text
@@ -81,17 +79,9 @@ def main():
     val_sequences = tokenizer.texts_to_sequences(val_data['cleaned_text'])
     test_sequences = tokenizer.texts_to_sequences(test_data['cleaned_text'])
     
-    # Calculate sequence lengths
+    # Calculate sequence lengths and build histogram to see distribution
     train_lengths = [len(seq) for seq in train_sequences]
-    
-    # Plot histogram of sequence lengths
     plot_sequence_length_histogram(train_lengths)
-    
-    # Print some statistics
-    print(f"Median sequence length: {np.median(train_lengths):.0f}")
-    print(f"95th percentile of sequence length: {np.percentile(train_lengths, 95):.0f}")
-    print(f"Max sequence length: {max(train_lengths)}")
-    
     
     # Pad sequences
     train_padded = pad_sequences(train_sequences, maxlen=100)
@@ -116,14 +106,14 @@ def main():
                         epochs=10, batch_size=32)
     
     # Plot training history
-   # plt.figure(figsize=(12, 6))
-   # plt.plot(history.history['accuracy'], label='Training Accuracy')
-   # plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
-    #plt.title('Model Accuracy')
-    #plt.xlabel('Epoch')
-    #plt.ylabel('Accuracy')
-    #plt.legend()
-    #plt.show()
+    plt.figure(figsize=(12, 6))
+    plt.plot(history.history['accuracy'], label='Training Accuracy')
+    plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
+    plt.title('Model Accuracy')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.show()
     
     # Evaluate model on test set
     print("\nEvaluating model on test set:")
